@@ -34,6 +34,9 @@ public class generalMarkov {
         double sum = 0;
         if (arr == null) {return;}
         for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == null) {
+                continue;
+            }
             sum += arr[i];
             if (ran <= sum) {
                 currentState = i;
