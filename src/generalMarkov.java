@@ -14,7 +14,7 @@ public class generalMarkov {
     // the transitions array used to store all transitions a baby does
     public HashMap<String, Double[]> transitions = new HashMap<String, Double[]>();
 
-    public generalMarkov(int currentState, int[] trainingData, String[] stateNames1, int numberOfOrder, ArrayList<Integer> lastDataArr) {
+    public generalMarkov(int currentState, ArrayList<Integer> trainingData, String[] stateNames1, int numberOfOrder, ArrayList<Integer> lastDataArr) {
         // initialize values and constants
         this.stateNames = stateNames1;
         this.currentState = currentState;
@@ -57,25 +57,34 @@ public class generalMarkov {
         }
     }
 
-    public HashMap<String, Integer[]> getRepetitionOfOrder(int[] statesArr) {
+    public ArrayList<Integer> getNextNStates(int n) {
+        ArrayList<Integer> nextNStates = new ArrayList<Integer>();
+        for (int i = 0; i < n; i++) {
+            nextState();
+            nextNStates.add(currentState);
+        }
+        return nextNStates;
+    }
+
+    public HashMap<String, Integer[]> getRepetitionOfOrder(ArrayList<Integer> statesArr) {
         HashMap<String, Integer[]> Obj = new HashMap<String, Integer[]>();
-        for (int i = 0; i < statesArr.length-numOrder; i++) {
+        for (int i = 0; i < statesArr.size()-numOrder; i++) {
             int counter = 0;
             String str = "";
             while(counter < numOrder) {
-                str += statesArr[i+counter];
+                str += statesArr.get(i+counter);
                 counter++;
             }
             Integer[] arr;
-            if (Obj.get(str) != null) { // i = 5 there is a problem
+            if (Obj.get(str) != null) {
                 arr = Obj.get(str);
-                if (arr[statesArr[i+numOrder]] == null) { // solve what if null
-                    arr[statesArr[i+numOrder]] = 0;
+                if (arr[statesArr.get(i+numOrder)] == null) {
+                    arr[statesArr.get(i+numOrder)] = 0;
                 }
-                arr[statesArr[i+numOrder]]++;
+                arr[statesArr.get(i+numOrder)]++;
             } else {
                 arr = new Integer[stateNames.length];
-                arr[statesArr[i+numOrder]] = 1;
+                arr[statesArr.get(i+numOrder)] = 1;
             }
             Obj.put(str, arr);
         }
@@ -83,7 +92,7 @@ public class generalMarkov {
     }
 
 
-    public void train(int[] statesArr) {
+    public void train(ArrayList<Integer> statesArr) {
         // find Repetition Order
         HashMap<String, Integer[]> Obj = getRepetitionOfOrder(statesArr);
         // change transitions
